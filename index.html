@@ -3,89 +3,348 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Palette Generator</title>
+  <title>Notion Color Palette Generator</title>
   <style>
+    :root {
+      --primary-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      --border-radius: 8px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.1);
+      --transition: all 0.25s ease;
+      --accent: #2382fe;
+    }
+    
     body {
-      font-family: sans-serif;
+      font-family: var(--primary-font);
       padding: 2rem;
-      background: #f9f9f9;
-      color: #333;
+      background: #ffffff;
+      color: #37352f;
       text-align: center;
+      line-height: 1.5;
+      max-width: 800px;
+      margin: 0 auto;
     }
-    input[type="text"], input[type="color"] {
-      padding: 0.5rem;
-      font-size: 1rem;
-      margin: 0.5rem;
+    
+    h1 {
+      font-weight: 600;
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
-    button {
-      padding: 0.5rem 1rem;
-      margin-top: 1rem;
-      cursor: pointer;
+    
+    p {
+      margin: 0.75rem 0;
+      color: #595959;
+      font-size: 0.95rem;
     }
-    .palette {
+    
+    .control-panel {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      margin-top: 2rem;
-      gap: 1rem;
-    }
-    .color-box {
-      width: 100px;
-      height: 100px;
-      display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      color: white;
-      font-size: 0.8rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      gap: 1rem;
+      margin: 1.5rem 0;
+      padding: 1.25rem;
+      background: #f7f7f7;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
     }
-    .copy-btn {
-      margin-top: 0.5rem;
-      font-size: 0.7rem;
-      padding: 0.3rem 0.5rem;
-      background: rgba(255,255,255,0.2);
+    
+    .color-input-group {
+      display: flex;
+      align-items: center;
+      position: relative;
+      background: white;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+    }
+    
+    input[type="text"] {
+      padding: 0.7rem 0.8rem;
+      font-size: 0.95rem;
       border: none;
-      color: white;
-      cursor: pointer;
-      border-radius: 4px;
+      outline: none;
+      width: 110px;
+      transition: var(--transition);
     }
+    
+    input[type="text"]:focus {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    
+    input[type="color"] {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 0;
+      background: none;
+      cursor: pointer;
+      overflow: hidden;
+      padding: 0;
+      margin-left: 4px;
+    }
+    
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+    }
+    
+    .palette-type-select {
+      padding: 0.7rem 1rem;
+      border: none;
+      background: white;
+      border-radius: var(--border-radius);
+      font-size: 0.95rem;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+      transition: var(--transition);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.7rem center;
+      padding-right: 2.5rem;
+    }
+    
+    .palette-type-select:focus {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    
+    button.generate-btn {
+      padding: 0.7rem 1.4rem;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 2px 6px rgba(35, 130, 254, 0.3);
+    }
+    
+    button.generate-btn:hover {
+      background-color: #1a76e8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(35, 130, 254, 0.4);
+    }
+    
     .preset-group {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 1rem;
+      gap: 0.6rem;
+      margin: 1.25rem 0;
     }
+    
     .preset-button {
       border: none;
-      padding: 0.5rem 1rem;
+      padding: 0.6rem 0.9rem;
       cursor: pointer;
-      border-radius: 6px;
+      border-radius: var(--border-radius);
       font-size: 0.85rem;
+      font-weight: 500;
       color: white;
-      background-color: #666;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+    
+    .preset-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .palettes-container {
+      margin-top: 2rem;
+    }
+    
+    .palette {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: #f9f9f9;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+    
+    .color-box {
+      width: 110px;
+      height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+      transition: var(--transition);
+      position: relative;
+    }
+    
+    .color-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    }
+    
+    .color-info {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 0.7rem 0;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-align: center;
+      backdrop-filter: blur(5px);
+    }
+    
+    .color-role {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+    
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: var(--transition);
+      backdrop-filter: blur(3px);
+    }
+    
+    .color-box:hover .copy-btn {
+      opacity: 1;
+    }
+    
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.5);
+      transform: scale(1.05);
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 0.7rem 1.4rem;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+    
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    
+    .palette-description {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      text-align: left;
+      border-left: 4px solid var(--accent);
+      box-shadow: var(--shadow);
+    }
+    
+    .palette-description h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    
+    .palette-description p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    
+    @media (max-width: 600px) {
+      .control-panel {
+        flex-direction: column;
+        padding: 1rem;
+      }
+      
+      .color-input-group, .palette-type-select {
+        width: 100%;
+      }
+      
+      .generate-btn {
+        width: 100%;
+      }
+      
+      .color-box {
+        width: 90px;
+        height: 100px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>🎨 Palette Generator</h1>
-  <p>Enter a HEX color or use the picker:</p>
-  <input type="text" id="hexInput" placeholder="#6B5B95" value="#6B5B95" />
-  <input type="color" id="colorPicker" value="#6B5B95" onchange="syncColorPicker()" />
-  <button onclick="generatePalette()">Generate Palette</button>
+  <h1>🎨 Notion Palette Generator</h1>
+  <p>Create beautiful, harmonious color palettes for your Notion pages and projects</p>
+  
+  <div class="control-panel">
+    <div class="color-input-group">
+      <input type="text" id="hexInput" placeholder="#6B5B95" value="#6B5B95" />
+      <input type="color" id="colorPicker" value="#6B5B95" onchange="syncColorPicker()" />
+    </div>
+    
+    <select id="paletteType" class="palette-type-select">
+      <option value="monochromatic">Monochromatic</option>
+      <option value="complementary">Complementary</option>
+      <option value="analogous">Analogous</option>
+      <option value="triadic">Triadic</option>
+      <option value="tetradic">Tetradic</option>
+    </select>
+    
+    <button class="generate-btn" onclick="generatePalette()">Generate Palette</button>
+  </div>
 
   <p>Not sure what to choose? Try one of these starter colors:</p>
   <div class="preset-group">
-    <button class="preset-button" style="background-color:#6B5B95" onclick="setPreset('#6B5B95')">Elegant</button>
-    <button class="preset-button" style="background-color:#2E8B57" onclick="setPreset('#2E8B57')">Trustworthy</button>
-    <button class="preset-button" style="background-color:#F4A261" onclick="setPreset('#F4A261')">Energetic</button>
-    <button class="preset-button" style="background-color:#1E90FF" onclick="setPreset('#1E90FF')">Modern</button>
+    <button class="preset-button" style="background-color:#4169E1" onclick="setPreset('#4169E1')">Royal Blue</button>
+    <button class="preset-button" style="background-color:#008080" onclick="setPreset('#008080')">Teal</button>
+    <button class="preset-button" style="background-color:#FF7F50" onclick="setPreset('#FF7F50')">Coral</button>
+    <button class="preset-button" style="background-color:#8E4585" onclick="setPreset('#8E4585')">Plum</button>
+    <button class="preset-button" style="background-color:#228B22" onclick="setPreset('#228B22')">Forest Green</button>
   </div>
 
-  <div class="palette" id="monochrome"></div>
-  <div class="palette" id="complementary"></div>
+  <div class="palettes-container">
+    <div class="palette-description" id="paletteDescription">
+      <h3>Monochromatic Palette</h3>
+      <p>Uses different tints and shades of a single color for a clean, cohesive look.</p>
+    </div>
+    <div class="palette" id="palette"></div>
+  </div>
+  
+  <div id="toast" class="toast"></div>
 
   <script>
     function syncColorPicker() {
@@ -102,15 +361,79 @@
 
     function generatePalette() {
       const hex = document.getElementById('hexInput').value;
-      if (!/^#?[0-9A-Fa-f]{6}$/.test(hex)) return alert('Please enter a valid HEX code.');
-      const cleanHex = hex.startsWith('#') ? hex.slice(1) : hex;
+      const paletteType = document.getElementById('paletteType').value;
+      const hexRegex = /^#?[0-9A-Fa-f]{6}$/;
+      
+      if (!hexRegex.test(hex)) {
+        showToast('Please enter a valid HEX code');
+        return;
+      }
+      
+      const cleanHex = hex.startsWith('#') ? hex : '#' + hex;
+      document.getElementById('hexInput').value = cleanHex;
+      document.getElementById('colorPicker').value = cleanHex;
+      
+      const baseRGB = hexToRgb(cleanHex.slice(1));
+      let colors, description, title;
+      
+      switch(paletteType) {
+        case 'monochromatic':
+          colors = generateMonochrome(baseRGB);
+          title = 'Monochromatic Palette';
+          description = 'Uses different tints and shades of a single color for a clean, cohesive look.';
+          break;
+        case 'complementary':
+          colors = generateComplementary(baseRGB);
+          title = 'Complementary Palette';
+          description = 'Pairs your base color with colors from the opposite side of the color wheel for high contrast and vibrant designs.';
+          break;
+        case 'analogous':
+          colors = generateAnalogous(baseRGB);
+          title = 'Analogous Palette';
+          description = 'Uses colors that are adjacent to each other on the color wheel, creating a harmonious and serene palette.';
+          break;
+        case 'triadic':
+          colors = generateTriadic(baseRGB);
+          title = 'Triadic Palette';
+          description = 'Incorporates three colors equally spaced around the color wheel for a balanced yet vibrant look.';
+          break;
+        case 'tetradic':
+          colors = generateTetradic(baseRGB);
+          title = 'Tetradic Palette';
+          description = 'A rich palette using four colors arranged into two complementary pairs, offering many possibilities for accent colors.';
+          break;
+      }
 
-      const baseRGB = hexToRgb(cleanHex);
-      const monoColors = generateMonochrome(baseRGB);
-      const compColors = generateComplementary(baseRGB);
+      // Update the description
+      document.getElementById('paletteDescription').innerHTML = `
+        <h3>${title}</h3>
+        <p>${description}</p>
+      `;
+      
+      // Add color roles based on palette type
+      const roles = getRolesForPalette(paletteType);
+      colors.forEach((color, index) => {
+        color.role = roles[index];
+      });
 
-      renderPalette('monochrome', monoColors, 'Monochromatic');
-      renderPalette('complementary', compColors, 'Complementary');
+      renderPalette('palette', colors);
+    }
+
+    function getRolesForPalette(type) {
+      switch(type) {
+        case 'monochromatic':
+          return ['Darkest', 'Dark', 'Base', 'Light', 'Lightest'];
+        case 'complementary':
+          return ['Complement Dark', 'Complement', 'Base', 'Base Light', 'Base Dark'];
+        case 'analogous':
+          return ['Left 2', 'Left 1', 'Base', 'Right 1', 'Right 2'];
+        case 'triadic':
+          return ['Triad 1', 'Triad 1 Light', 'Base', 'Triad 2', 'Triad 2 Light'];
+        case 'tetradic':
+          return ['Color 1', 'Color 2', 'Base', 'Color 3', 'Color 4'];
+        default:
+          return ['Color 1', 'Color 2', 'Base', 'Color 4', 'Color 5'];
+      }
     }
 
     function hexToRgb(hex) {
@@ -125,6 +448,79 @@
       return '#' + [r,g,b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
     }
 
+    function rgbToHsl(r, g, b) {
+      r /= 255;
+      g /= 255;
+      b /= 255;
+      
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      let h, s, l = (max + min) / 2;
+
+      if (max === min) {
+        h = s = 0; // achromatic
+      } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        
+        h /= 6;
+      }
+
+      return { h: h * 360, s: s * 100, l: l * 100 };
+    }
+
+    function hslToRgb(h, s, l) {
+      h /= 360;
+      s /= 100;
+      l /= 100;
+      
+      let r, g, b;
+
+      if (s === 0) {
+        r = g = b = l; // achromatic
+      } else {
+        const hue2rgb = (p, q, t) => {
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          if (t < 1/6) return p + (q - p) * 6 * t;
+          if (t < 1/2) return q;
+          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          return p;
+        };
+
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+      }
+
+      return { 
+        r: Math.round(r * 255), 
+        g: Math.round(g * 255), 
+        b: Math.round(b * 255) 
+      };
+    }
+
+    function getLuminance({r,g,b}) {
+      const a = [r,g,b].map(v => {
+        v /= 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+    }
+
+    function getContrastColor(rgb) {
+      return getLuminance(rgb) > 0.5 ? '#000000' : '#FFFFFF';
+    }
+
     function adjust(color, factor) {
       return {
         r: Math.min(255, Math.max(0, Math.round(color.r * factor))),
@@ -134,27 +530,141 @@
     }
 
     function generateMonochrome(base) {
-      return [0.6, 0.8, 1, 1.2, 1.4].map(factor => rgbToHex(adjust(base, factor)));
+      return [0.6, 0.8, 1, 1.2, 1.4].map(factor => {
+        const adjusted = adjust(base, factor);
+        return {
+          hex: rgbToHex(adjusted),
+          rgb: adjusted
+        };
+      });
     }
 
     function generateComplementary(base) {
-      const comp = { r: 255 - base.r, g: 255 - base.g, b: 255 - base.b };
-      return generateMonochrome(comp);
+      // Use HSL for true complementary color (180° shift on color wheel)
+      const hsl = rgbToHsl(base.r, base.g, base.b);
+      const compHsl = { h: (hsl.h + 180) % 360, s: hsl.s, l: hsl.l };
+      const compRgb = hslToRgb(compHsl.h, compHsl.s, compHsl.l);
+      
+      // Create a palette with the complementary color and base color variations
+      return [
+        adjust(compRgb, 0.8),
+        compRgb,
+        base,
+        adjust(base, 1.2),
+        adjust(base, 0.8)
+      ].map(rgb => ({
+        hex: rgbToHex(rgb),
+        rgb: rgb
+      }));
+    }
+    
+    function generateAnalogous(base) {
+      const hsl = rgbToHsl(base.r, base.g, base.b);
+      
+      // Generate 5 colors: 2 to the left, base, 2 to the right
+      return [-40, -20, 0, 20, 40].map(shift => {
+        const newHsl = { 
+          h: (hsl.h + shift + 360) % 360, 
+          s: hsl.s, 
+          l: hsl.l 
+        };
+        const rgb = hslToRgb(newHsl.h, newHsl.s, newHsl.l);
+        return {
+          hex: rgbToHex(rgb),
+          rgb: rgb
+        };
+      });
+    }
+    
+    function generateTriadic(base) {
+      const hsl = rgbToHsl(base.r, base.g, base.b);
+      
+      // Generate base and triadic colors (120° apart)
+      const triad1Hsl = { h: (hsl.h + 120) % 360, s: hsl.s, l: hsl.l };
+      const triad2Hsl = { h: (hsl.h + 240) % 360, s: hsl.s, l: hsl.l };
+      
+      const triad1 = hslToRgb(triad1Hsl.h, triad1Hsl.s, triad1Hsl.l);
+      const triad2 = hslToRgb(triad2Hsl.h, triad2Hsl.s, triad2Hsl.l);
+      
+      return [
+        triad1,
+        adjust(triad1, 1.2),
+        base,
+        triad2,
+        adjust(triad2, 1.2)
+      ].map(rgb => ({
+        hex: rgbToHex(rgb),
+        rgb: rgb
+      }));
+    }
+    
+    function generateTetradic(base) {
+      const hsl = rgbToHsl(base.r, base.g, base.b);
+      
+      // Generate rectangle/tetradic colors (60°, 180°, 240° apart)
+      const color2Hsl = { h: (hsl.h + 60) % 360, s: hsl.s, l: hsl.l };
+      const color3Hsl = { h: (hsl.h + 180) % 360, s: hsl.s, l: hsl.l };
+      const color4Hsl = { h: (hsl.h + 240) % 360, s: hsl.s, l: hsl.l };
+      
+      const color2 = hslToRgb(color2Hsl.h, color2Hsl.s, color2Hsl.l);
+      const color3 = hslToRgb(color3Hsl.h, color3Hsl.s, color3Hsl.l);
+      const color4 = hslToRgb(color4Hsl.h, color4Hsl.s, color4Hsl.l);
+      
+      return [
+        color4,
+        color2,
+        base,
+        color3,
+        adjust(color4, 1.2)
+      ].map(rgb => ({
+        hex: rgbToHex(rgb),
+        rgb: rgb
+      }));
     }
 
-    function renderPalette(containerId, hexArray, title) {
+    function renderPalette(containerId, colorArray) {
       const container = document.getElementById(containerId);
-      container.innerHTML = `<h2>${title}</h2>`;
-      hexArray.forEach(hex => {
+      container.innerHTML = '';
+      
+      colorArray.forEach(color => {
         const box = document.createElement('div');
         box.className = 'color-box';
-        box.style.backgroundColor = hex;
+        box.style.backgroundColor = color.hex;
+        
+        // Determine text color based on background luminance
+        const textColor = getContrastColor(color.rgb);
+        
         box.innerHTML = `
-          <div>${hex}</div>
-          <button class="copy-btn" onclick="navigator.clipboard.writeText('${hex}')">Copy</button>
+          <button class="copy-btn" onclick="copyToClipboard('${color.hex}')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 3H4V16H16V3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 7H20V20H8V7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="color-info">
+            ${color.hex}
+            <div class="color-role">${color.role}</div>
+          </div>
         `;
+        
         container.appendChild(box);
       });
+    }
+    
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`Copied ${text} to clipboard!`);
+      });
+    }
+    
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
     }
 
     // Generate palette on load with default value
