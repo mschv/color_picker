@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Palette Generator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background: #f9f9f9;
+      color: #333;
+      text-align: center;
+    }
+    input[type="text"], input[type="color"] {
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin: 0.5rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+    .palette {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 2rem;
+      gap: 1rem;
+    }
+    .color-box {
+      width: 100px;
+      height: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.8rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .copy-btn {
+      margin-top: 0.5rem;
+      font-size: 0.7rem;
+      padding: 0.3rem 0.5rem;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .preset-group {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .preset-button {
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: white;
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎨 Palette Generator</h1>
+  <p>Enter a HEX color or use the picker:</p>
+  <input type="text" id="hexInput" placeholder="#6B5B95" value="#6B5B95" />
+  <input type="color" id="colorPicker" value="#6B5B95" onchange="syncColorPicker()" />
+  <button onclick="generatePalette()">Generate Palette</button>
+
+  <p>Not sure what to choose? Try one of these starter colors:</p>
+  <div class="preset-group">
+    <button class="preset-button" style="background-color:#6B5B95" onclick="setPreset('#6B5B95')">Elegant</button>
+    <button class="preset-button" style="background-color:#2E8B57" onclick="setPreset('#2E8B57')">Trustworthy</button>
+    <button class="preset-button" style="background-color:#F4A261" onclick="setPreset('#F4A261')">Energetic</button>
+    <button class="preset-button" style="background-color:#1E90FF" onclick="setPreset('#1E90FF')">Modern</button>
+  </div>
+
+  <div class="palette" id="monochrome"></div>
+  <div class="palette" id="complementary"></div>
+
+  <script>
+    function syncColorPicker() {
+      const color = document.getElementById('colorPicker').value;
+      document.getElementById('hexInput').value = color;
+      generatePalette();
+    }
+
+    function setPreset(hex) {
+      document.getElementById('hexInput').value = hex;
+      document.getElementById('colorPicker').value = hex;
+      generatePalette();
+    }
+
+    function generatePalette() {
+      const hex = document.getElementById('hexInput').value;
+      if (!/^#?[0-9A-Fa-f]{6}$/.test(hex)) return alert('Please enter a valid HEX code.');
+      const cleanHex = hex.startsWith('#') ? hex.slice(1) : hex;
+
+      const baseRGB = hexToRgb(cleanHex);
+      const monoColors = generateMonochrome(baseRGB);
+      const compColors = generateComplementary(baseRGB);
+
+      renderPalette('monochrome', monoColors, 'Monochromatic');
+      renderPalette('complementary', compColors, 'Complementary');
+    }
+
+    function hexToRgb(hex) {
+      return {
+        r: parseInt(hex.substring(0,2), 16),
+        g: parseInt(hex.substring(2,4), 16),
+        b: parseInt(hex.substring(4,6), 16),
+      };
+    }
+
+    function rgbToHex({r,g,b}) {
+      return '#' + [r,g,b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+    }
+
+    function adjust(color, factor) {
+      return {
+        r: Math.min(255, Math.max(0, Math.round(color.r * factor))),
+        g: Math.min(255, Math.max(0, Math.round(color.g * factor))),
+        b: Math.min(255, Math.max(0, Math.round(color.b * factor))),
+      };
+    }
+
+    function generateMonochrome(base) {
+      return [0.6, 0.8, 1, 1.2, 1.4].map(factor => rgbToHex(adjust(base, factor)));
+    }
+
+    function generateComplementary(base) {
+      const comp = { r: 255 - base.r, g: 255 - base.g, b: 255 - base.b };
+      return generateMonochrome(comp);
+    }
+
+    function renderPalette(containerId, hexArray, title) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = `<h2>${title}</h2>`;
+      hexArray.forEach(hex => {
+        const box = document.createElement('div');
+        box.className = 'color-box';
+        box.style.backgroundColor = hex;
+        box.innerHTML = `
+          <div>${hex}</div>
+          <button class="copy-btn" onclick="navigator.clipboard.writeText('${hex}')">Copy</button>
+        `;
+        container.appendChild(box);
+      });
+    }
+
+    // Generate palette on load with default value
+    window.onload = generatePalette;
+  </script>
+</body>
+</html>
